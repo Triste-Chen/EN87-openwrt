@@ -41,6 +41,9 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+          rm -rf feeds/luci/applications/luci-app-passwall
+          rm -f package/feeds/luci/luci-app-passwall
+
           rm -rf feeds/packages/net/xray-core                  feeds/packages/net/v2ray-geodata                  feeds/packages/net/sing-box                  feeds/packages/net/chinadns-ng                  feeds/packages/net/dns2socks                  feeds/packages/net/ipt2socks                  feeds/packages/net/microsocks                  feeds/packages/net/tcping                  feeds/packages/net/geoview
 
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git package/passwall-packages
@@ -49,11 +52,12 @@ jobs:
           grep -qx 'PKG_VERSION:=24.12.31' package/passwall-packages/xray-core/Makefile
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall.git package/passwall-luci
           git -C package/passwall-luci checkout d9373af2f74fe9efabcfe57b257a047e445c8e07
+          test ! -e package/feeds/luci/luci-app-passwall
+          grep -qx 'PKG_VERSION:=26.5.20' package/passwall-luci/luci-app-passwall/Makefile
           sed -i '/^config .*INCLUDE_Geoview$/,+3 s/default y if aarch64||arm||i386||x86_64/default n/' package/passwall-luci/luci-app-passwall/Makefile
           sed -i '/^config .*INCLUDE_SingBox$/,+3 s/default y if aarch64||arm||i386||x86_64/default n/' package/passwall-luci/luci-app-passwall/Makefile
           grep -A3 'INCLUDE_Geoview' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
           grep -A3 'INCLUDE_SingBox' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
-          rm -rf package/passwall-packages/geoview
           rm -rf tmp
       - name: Configure wired-only firmware
         run: |
