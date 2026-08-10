@@ -9,7 +9,6 @@ on:
       - 'package/vendor/e87n-defaults/Makefile'
       - 'target/linux/mediatek/image/filogic.mk'
       - '.github/workflows/e87n-bypass-build.yml'
-      - '.github/patches/passwall-xray-only.patch'
 
 permissions:
   contents: read
@@ -50,7 +49,8 @@ jobs:
           grep -qx 'PKG_VERSION:=24.12.31' package/passwall-packages/xray-core/Makefile
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall.git package/passwall-luci
           git -C package/passwall-luci checkout d9373af2f74fe9efabcfe57b257a047e445c8e07
-          git -C package/passwall-luci apply "$GITHUB_WORKSPACE/.github/patches/passwall-xray-only.patch"
+          sed -i '/^config .*INCLUDE_Geoview$/,+3 s/default y if aarch64||arm||i386||x86_64/default n/' package/passwall-luci/luci-app-passwall/Makefile
+          sed -i '/^config .*INCLUDE_SingBox$/,+3 s/default y if aarch64||arm||i386||x86_64/default n/' package/passwall-luci/luci-app-passwall/Makefile
           grep -A3 'INCLUDE_Geoview' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
           grep -A3 'INCLUDE_SingBox' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
       - name: Configure wired-only firmware
