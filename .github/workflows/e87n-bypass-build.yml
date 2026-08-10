@@ -45,6 +45,9 @@ jobs:
 
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git package/passwall-packages
           git -C package/passwall-packages checkout b4f719f44343b6f62d5c21e14da0c844b21a58ed
+          git -C package/passwall-packages checkout 825aa3a00ad839f3f2521f7e06750a271dabae17 -- xray-core
+          rm -rf package/passwall-packages/sing-box package/passwall-packages/geoview
+          grep -qx 'PKG_VERSION:=24.12.31' package/passwall-packages/xray-core/Makefile
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall.git package/passwall-luci
           git -C package/passwall-luci checkout d9373af2f74fe9efabcfe57b257a047e445c8e07
 
@@ -58,6 +61,7 @@ jobs:
             CONFIG_TARGET_mediatek_filogic_DEVICE_edgepi_e87n
             CONFIG_PACKAGE_e87n-bypass-defaults
             CONFIG_PACKAGE_luci-app-passwall
+            CONFIG_PACKAGE_xray-core
             CONFIG_PACKAGE_mosdns
             CONFIG_PACKAGE_adguardhome
             CONFIG_PACKAGE_luci-app-ipsec-vpnd
@@ -73,7 +77,7 @@ jobs:
             }
           done
 
-          forbidden_regex='CONFIG_PACKAGE_(docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils)=y'
+          forbidden_regex='CONFIG_PACKAGE_(sing-box|geoview|docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils)=y'
           if grep -E "${forbidden_regex}" .config; then
             echo 'forbidden package selected' >&2
             exit 1
@@ -109,7 +113,7 @@ jobs:
             }
           done
 
-          if grep -E '^(docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils) -' "$manifest"; then
+          if grep -E '^(sing-box|geoview|docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils) -' "$manifest"; then
             echo 'forbidden package found in image manifest' >&2
             exit 1
           fi
@@ -123,6 +127,9 @@ jobs:
             echo "management_ip=192.168.88.1"
             echo "wireless=excluded"
             echo "sing_box=excluded_go_1.24_requirement"
+            echo "geoview=excluded_go_1.25_requirement"
+            echo "xray_core_version=24.12.31"
+            echo "xray_package_commit=825aa3a00ad839f3f2521f7e06750a271dabae17"
             date -u '+built_at=%Y-%m-%dT%H:%M:%SZ'
           } > "$target/e87n-bypass-build-evidence.txt"
 
