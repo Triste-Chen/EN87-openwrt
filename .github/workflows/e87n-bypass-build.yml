@@ -53,6 +53,7 @@ jobs:
           sed -i '/^config .*INCLUDE_SingBox$/,+3 s/default y if aarch64||arm||i386||x86_64/default n/' package/passwall-luci/luci-app-passwall/Makefile
           grep -A3 'INCLUDE_Geoview' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
           grep -A3 'INCLUDE_SingBox' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
+          rm -rf package/passwall-packages/geoview
           rm -rf tmp
       - name: Configure wired-only firmware
         run: |
