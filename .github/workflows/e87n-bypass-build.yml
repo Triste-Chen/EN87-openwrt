@@ -98,7 +98,7 @@ jobs:
 
           required_packages=(
             e87n-bypass-defaults fancontrol display-control
-            luci-app-passwall xray-core sing-box mosdns adguardhome
+            luci-app-passwall xray-core mosdns adguardhome
             strongswan luci-app-ipsec-vpnd ddns-scripts luci-app-ddns
             luci-app-upnp vlmcsd luci-app-vlmcsd ttyd luci-app-ttyd
           )
@@ -122,6 +122,7 @@ jobs:
             echo "passwall_packages=b4f719f44343b6f62d5c21e14da0c844b21a58ed"
             echo "management_ip=192.168.88.1"
             echo "wireless=excluded"
+            echo "sing_box=excluded_go_1.24_requirement"
             date -u '+built_at=%Y-%m-%dT%H:%M:%SZ'
           } > "$target/e87n-bypass-build-evidence.txt"
 
