@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Wired-only E87N bypass-router defaults. This script deliberately does not
+# guess an upstream gateway or DNS server; those depend on the user's main
+# router. The administration address remains reachable at 192.168.88.1.
+
+uci -q set system.@system[0].hostname='E87N-Bypass'
+
+uci -q set network.lan.proto='static'
+uci -q set network.lan.ipaddr='192.168.88.1'
+uci -q set network.lan.netmask='255.255.255.0'
+uci -q delete network.lan.gateway
+uci -q delete network.lan.dns
+
+# eth0 remains the management/LAN port. The second 2.5G port is not brought up
+# automatically, preventing accidental routing loops in bypass-router use.
+uci -q set network.wan.proto='none'
+uci -q set network.wan.auto='0'
+uci -q set network.wan6.proto='none'
+uci -q set network.wan6.auto='0'
+
+# The main router remains the only DHCP server.
+uci -q set dhcp.lan.ignore='1'
+uci -q set dhcp.lan.ra='disabled'
+uci -q set dhcp.lan.dhcpv6='disabled'
+uci -q set dhcp.lan.ndp='disabled'
+
+uci -q commit system
+uci -q commit network
+uci -q commit dhcp
+
+logger -t e87n-bypass 'wired bypass defaults applied; management address 192.168.88.1'
+exit 0
