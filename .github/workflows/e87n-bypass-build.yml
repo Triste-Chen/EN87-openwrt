@@ -51,7 +51,8 @@ jobs:
           git clone https://github.com/Openwrt-Passwall/openwrt-passwall.git package/passwall-luci
           git -C package/passwall-luci checkout d9373af2f74fe9efabcfe57b257a047e445c8e07
           git -C package/passwall-luci apply "$GITHUB_WORKSPACE/.github/patches/passwall-xray-only.patch"
-          grep -A3 'INCLUDE_Geoview' package/passwall-luci/luci-app-passwall/Makefile | grep -q 
+          grep -A3 'INCLUDE_Geoview' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
+          grep -A3 'INCLUDE_SingBox' package/passwall-luci/luci-app-passwall/Makefile | grep -q '^[[:space:]]*default n$'
       - name: Configure wired-only firmware
         run: |
           cp configs/e87n-bypass.config .config
