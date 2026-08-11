@@ -43,6 +43,7 @@ defaults_makefile="$root/package/vendor/e87n-defaults/Makefile"
 status_tool="$root/package/vendor/e87n-defaults/files/usr/sbin/e87n-offload-status"
 turbo_defaults="$root/package/mtk/applications/luci-app-turboacc-mtk/root/etc/uci-defaults/turboacc"
 turbo_makefile="$root/package/mtk/applications/luci-app-turboacc-mtk/Makefile"
+hnat_makefile="$root/package/kernel/linux/modules/netdevices.mk"
 
 grep -q "network.wan6.auto='0'" "$defaults_policy"
 grep -q "fastpath_mh_eth_hnat_v6='0'" "$defaults_policy"
@@ -66,6 +67,10 @@ for required in luci-base rpcd kmod-mediatek_hnat luci-lua-runtime; do
 done
 if grep -Eq 'luci-app-ttyd|kmod-fs-btrfs|kmod-tcp-bbr' "$turbo_makefile"; then
 	echo 'TurboACC Makefile retained unrelated heavy dependencies' >&2
+	exit 1
+fi
+if sed -n '/define KernelPackage\/mediatek_hnat$/,/^endef$/p' "$hnat_makefile" | grep -q '+wireless-tools'; then
+	echo 'wired MediaTek HNAT retained wireless-tools dependency' >&2
 	exit 1
 fi
 
