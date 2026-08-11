@@ -45,8 +45,10 @@ jobs:
           # Keep the wired-only LuCI and statistics pages without pulling the
           # iwinfo wireless userspace back into the image.
           sed -i 's/ +rpcd-mod-iwinfo//' feeds/luci/modules/luci-mod-network/Makefile
+          sed -i 's/ +libiwinfo +rpcd-mod-iwinfo//' feeds/luci/modules/luci-mod-status/Makefile
           sed -i '/+collectd-mod-iwinfo/d' feeds/luci/applications/luci-app-statistics/Makefile
           ! grep -q 'rpcd-mod-iwinfo' feeds/luci/modules/luci-mod-network/Makefile
+          ! grep -Eq 'libiwinfo|rpcd-mod-iwinfo' feeds/luci/modules/luci-mod-status/Makefile
           ! grep -q 'collectd-mod-iwinfo' feeds/luci/applications/luci-app-statistics/Makefile
 
           rm -rf feeds/luci/applications/luci-app-passwall
@@ -123,7 +125,7 @@ jobs:
             }
           done
 
-          forbidden_regex='(CONFIG_PACKAGE_(sing-box|geoview|docker|dockerd|containerd|runc|luci-app-dockerman|samba4-server|samba4-libs|ksmbd-server|luci-app-samba4|luci-app-ksmbd|luci-app-diskman|luci-app-vsftpd|vsftpd|autoksmbd|autosamba|luci-app-modem|luci-app-WTModem|luci-app-qmodem|luci-app-qmodem-sms|luci-app-qmodem-ttl|qmodem|tom_modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils|wifi-scripts|wireless-tools|iw|iw-full|iwinfo|libiwinfo|rpcd-mod-iwinfo)=y|CONFIG_PACKAGE_luci-app-passwall_INCLUDE_(SingBox|Geoview)=y)'
+          forbidden_regex='(CONFIG_PACKAGE_(sing-box|geoview|docker|dockerd|containerd|runc|luci-app-dockerman|samba4-server|samba4-libs|ksmbd-server|luci-app-samba4|luci-app-ksmbd|luci-app-diskman|luci-app-vsftpd|vsftpd|autoksmbd|autosamba|luci-app-modem|luci-app-WTModem|luci-app-qmodem|luci-app-qmodem-sms|luci-app-qmodem-ttl|qmodem|tom_modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils|wifi-scripts|iw|iw-full|iwinfo|libiwinfo|rpcd-mod-iwinfo)=y|CONFIG_PACKAGE_luci-app-passwall_INCLUDE_(SingBox|Geoview)=y)'
           if grep -E "${forbidden_regex}" .config; then
             echo 'forbidden package selected' >&2
             exit 1
