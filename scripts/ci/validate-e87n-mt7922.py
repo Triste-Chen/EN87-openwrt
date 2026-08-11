@@ -40,7 +40,7 @@ wireless_packages = {
     "kmod-mt792x-common", "kmod-mt7921-common", "kmod-mt7921e",
     "kmod-mt7921-firmware", "kmod-mt7922-firmware", "wireless-regdb",
     "wifi-scripts", "wpad-openssl", "hostapd-utils", "wpa-cli", "iw-full",
-    "iwinfo", "libiwinfo", "rpcd-mod-iwinfo",
+    "iwinfo", "libiwinfo", "rpcd-mod-iwinfo", "wireless-tools",
 }
 for package in wireless_packages:
     assert package in negative, f"wired image: missing explicit exclusion {package}"

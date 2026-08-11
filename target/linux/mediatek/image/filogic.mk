@@ -850,12 +850,12 @@ define Device/edgepi_e87n
   BOARD_NAME := edgepi,e87n
   DEVICE_PACKAGES := \
 	-wpad -wpad-basic -wpad-basic-mbedtls -wpad-basic-openssl -wpad-basic-wolfssl \
-	-wpad-mbedtls -wpad-wolfssl -wpad-mesh -wpad-mesh-mbedtls -wpad-mesh-openssl -wpad-mesh-wolfssl \
+	-wpad-mbedtls -wpad-openssl -wpad-wolfssl -wpad-mesh -wpad-mesh-mbedtls -wpad-mesh-openssl -wpad-mesh-wolfssl \
 	-hostapd -hostapd-basic -hostapd-basic-mbedtls -hostapd-basic-openssl -hostapd-basic-wolfssl \
 	-hostapd-full -hostapd-mbedtls -hostapd-mini -hostapd-openssl -hostapd-wolfssl \
 	-wpa-supplicant -wpa-supplicant-mbedtls -wpa-supplicant-openssl -wpa-supplicant-wolfssl \
 	-wpa-supplicant-basic -wpa-supplicant-mini -wpa-supplicant-mesh-mbedtls -wpa-supplicant-mesh-openssl -wpa-supplicant-mesh-wolfssl \
-	-iw -iw-full -iwinfo -libiwinfo -rpcd-mod-iwinfo -wireless-regdb -wifi-scripts \
+	-iw -iw-full -iwinfo -libiwinfo -rpcd-mod-iwinfo -wireless-regdb -wifi-scripts -wireless-tools -hostapd-utils -wpa-cli \
 	-kmod-cfg80211 -kmod-mac80211 -kmod-mt76-core -kmod-mt76-connac \
 	-kmod-mt792x-common -kmod-mt7921-common -kmod-mt7921e \
 	-kmod-mt7921-firmware -kmod-mt7922-firmware \

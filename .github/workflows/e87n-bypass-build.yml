@@ -42,6 +42,13 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+          # Keep the wired-only LuCI and statistics pages without pulling the
+          # iwinfo wireless userspace back into the image.
+          sed -i 's/ +rpcd-mod-iwinfo//' feeds/luci/modules/luci-mod-network/Makefile
+          sed -i '/+collectd-mod-iwinfo/d' feeds/luci/applications/luci-app-statistics/Makefile
+          ! grep -q 'rpcd-mod-iwinfo' feeds/luci/modules/luci-mod-network/Makefile
+          ! grep -q 'collectd-mod-iwinfo' feeds/luci/applications/luci-app-statistics/Makefile
+
           rm -rf feeds/luci/applications/luci-app-passwall
           rm -f package/feeds/luci/luci-app-passwall
 
@@ -79,6 +86,21 @@ jobs:
             CONFIG_PACKAGE_luci-app-upnp
             CONFIG_PACKAGE_luci-app-vlmcsd
             CONFIG_PACKAGE_luci-app-ttyd
+            CONFIG_PACKAGE_luci-app-eqos-mtk
+            CONFIG_PACKAGE_luci-app-turboacc-mtk
+            CONFIG_PACKAGE_luci-app-wrtbwmon
+            CONFIG_PACKAGE_luci-app-statistics
+            CONFIG_PACKAGE_luci-app-netdata
+            CONFIG_PACKAGE_netdata
+            CONFIG_PACKAGE_luci-app-openvpn
+            CONFIG_PACKAGE_openvpn-openssl
+            CONFIG_PACKAGE_luci-proto-wireguard
+            CONFIG_PACKAGE_wireguard-tools
+            CONFIG_PACKAGE_kmod-wireguard
+            CONFIG_PACKAGE_luci-app-timewol
+            CONFIG_PACKAGE_luci-app-ramfree
+            CONFIG_PACKAGE_luci-app-watchcat
+            CONFIG_PACKAGE_watchcat
           )
           for symbol in "${required_symbols[@]}"; do
             grep -qx "${symbol}=y" .config || {
@@ -101,7 +123,7 @@ jobs:
             }
           done
 
-          forbidden_regex='(CONFIG_PACKAGE_(sing-box|geoview|docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils)=y|CONFIG_PACKAGE_luci-app-passwall_INCLUDE_(SingBox|Geoview)=y)'
+          forbidden_regex='(CONFIG_PACKAGE_(sing-box|geoview|docker|dockerd|containerd|runc|luci-app-dockerman|samba4-server|samba4-libs|ksmbd-server|luci-app-samba4|luci-app-ksmbd|luci-app-diskman|luci-app-vsftpd|vsftpd|autoksmbd|autosamba|luci-app-modem|luci-app-WTModem|luci-app-qmodem|luci-app-qmodem-sms|luci-app-qmodem-ttl|qmodem|tom_modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils|wifi-scripts|wireless-tools|iw|iw-full|iwinfo|libiwinfo|rpcd-mod-iwinfo)=y|CONFIG_PACKAGE_luci-app-passwall_INCLUDE_(SingBox|Geoview)=y)'
           if grep -E "${forbidden_regex}" .config; then
             echo 'forbidden package selected' >&2
             exit 1
@@ -129,6 +151,11 @@ jobs:
             luci-app-passwall xray-core mosdns adguardhome
             strongswan luci-app-ipsec-vpnd ddns-scripts luci-app-ddns
             luci-app-upnp vlmcsd luci-app-vlmcsd ttyd luci-app-ttyd
+            luci-app-eqos-mtk luci-app-turboacc-mtk luci-app-wrtbwmon
+            luci-app-statistics luci-app-netdata netdata
+            luci-app-openvpn openvpn-openssl
+            luci-proto-wireguard wireguard-tools kmod-wireguard
+            luci-app-timewol luci-app-ramfree luci-app-watchcat watchcat
           )
           for package in "${required_packages[@]}"; do
             grep -q "^${package} -" "$manifest" || {
@@ -137,7 +164,7 @@ jobs:
             }
           done
 
-          if grep -E '^(sing-box|geoview|docker|dockerd|containerd|runc|samba4-server|ksmbd-server|netdata|luci-app-modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils) -' "$manifest"; then
+          if grep -E '^(sing-box|geoview|docker|dockerd|containerd|runc|luci-app-dockerman|samba4-server|samba4-libs|ksmbd-server|luci-app-samba4|luci-app-ksmbd|luci-app-diskman|luci-app-vsftpd|vsftpd|autoksmbd|autosamba|luci-app-modem|luci-app-WTModem|luci-app-qmodem|luci-app-qmodem-sms|luci-app-qmodem-ttl|qmodem|tom_modem|kmod-cfg80211|kmod-mac80211|kmod-mt76-core|kmod-mt7921e|kmod-mt7922-firmware|wpad-openssl|hostapd-utils|wifi-scripts|wireless-tools|iw|iw-full|iwinfo|libiwinfo|rpcd-mod-iwinfo) -' "$manifest"; then
             echo 'forbidden package found in image manifest' >&2
             exit 1
           fi
@@ -150,7 +177,10 @@ jobs:
             echo "passwall_packages=b4f719f44343b6f62d5c21e14da0c844b21a58ed"
             echo "management_ip=192.168.88.1"
             echo "e87n_luci_control_center=1.0.0"
+            echo "vendor_reference_sha256=e1f18b9085cae89193d5e1f57b560d4b1bacae9f71d9ad64cc40dea678669f38"
+            echo "vendor_router_features=eqos,turboacc,wrtbwmon,statistics,netdata,openvpn,wireguard,timewol,ramfree,watchcat"
             echo "wireless=excluded"
+            echo "nas_docker_cpe=excluded"
             echo "sing_box=excluded_go_1.24_requirement"
             echo "geoview=excluded_go_1.25_requirement"
             echo "xray_core_version=24.12.31"
