@@ -10,7 +10,7 @@ required_packages = {
     "kmod-cfg80211", "kmod-mac80211", "kmod-mt76-core", "kmod-mt76-connac",
     "kmod-mt792x-common", "kmod-mt7921-common", "kmod-mt7921e",
     "kmod-mt7921-firmware", "kmod-mt7922-firmware", "wireless-regdb",
-    "wifi-scripts", "wpad-openssl", "hostapd-utils", "wpa-cli", "iw-full",
+    "wifi-scripts", "wpad-openssl", "iw-full",
     "iwinfo", "libiwinfo", "rpcd-mod-iwinfo", "luci-mod-network",
     "luci-mod-status", "pciutils", "ethtool", "iperf3", "tcpdump-mini",
 }
