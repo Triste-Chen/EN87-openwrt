@@ -73,7 +73,8 @@ jobs:
         run: |
           cp configs/e87n-bypass.config .config
           make defconfig
-          ./scripts/config --disable PACKAGE_wireless-tools
+          sed -i '/^CONFIG_PACKAGE_wireless-tools=/d' .config
+          printf '%s\n' '# CONFIG_PACKAGE_wireless-tools is not set' >> .config
           make defconfig
           ./scripts/diffconfig.sh | tee e87n-bypass.diffconfig
 
