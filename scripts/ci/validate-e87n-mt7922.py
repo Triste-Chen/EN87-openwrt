@@ -30,15 +30,30 @@ assert match, "missing edgepi_e87n image definition"
 block = match.group(1)
 package_block = block.split("\n\t# Keep", 1)[0]
 positive = {word for word in re.findall(r"(?<!-)\b[\w.+-]+\b", package_block)}
-for package in required_packages:
-    assert package in positive, f"image: missing positive package {package}"
+negative = set(re.findall(r"(?<![\w.])-([\w.+-]+)", package_block))
+
+# The dedicated E87N device image is wired-only.  Wireless profiles remain
+# available as explicit configs, but no radio stack may leak into the default
+# device package closure.
+wireless_packages = {
+    "kmod-cfg80211", "kmod-mac80211", "kmod-mt76-core", "kmod-mt76-connac",
+    "kmod-mt792x-common", "kmod-mt7921-common", "kmod-mt7921e",
+    "kmod-mt7921-firmware", "kmod-mt7922-firmware", "wireless-regdb",
+    "wifi-scripts", "wpad-openssl", "hostapd-utils", "wpa-cli", "iw-full",
+    "iwinfo", "libiwinfo", "rpcd-mod-iwinfo",
+}
+for package in wireless_packages:
+    assert package in negative, f"wired image: missing explicit exclusion {package}"
+
+for package in ("pciutils", "ethtool", "iperf3", "tcpdump-mini"):
+    assert package in positive, f"wired image: missing diagnostic package {package}"
 
 provider_pattern = re.compile(
     r"^(?:wpad(?:-.+)?|hostapd(?:-(?:basic.*|full|mini|mbedtls|openssl|wolfssl))?"
     r"|wpa-supplicant(?:-.+)?)$"
 )
 providers = {package for package in positive if provider_pattern.match(package)}
-assert providers == {"wpad-openssl"}, f"image provider set is {sorted(providers)}"
+assert not providers, f"wired image provider set is {sorted(providers)}"
 assert "mt76-test" not in positive
 
 mt76 = (root / "package/kernel/mt76/Makefile").read_text(encoding="utf-8")
