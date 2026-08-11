@@ -1,0 +1,50 @@
+{
+	"admin/system/e87n-fancontrol": {
+		"title": "E87N 风扇控制",
+		"order": 70,
+		"action": {
+			"type": "view",
+			"path": "e87n/fancontrol"
+		},
+		"depends": {
+			"acl": [ "luci-app-e87n-control-center" ],
+			"uci": { "fancontrol": true }
+		}
+	},
+	"admin/system/e87n-display": {
+		"title": "E87N 屏幕控制",
+		"order": 71,
+		"action": {
+			"type": "view",
+			"path": "e87n/display"
+		},
+		"depends": {
+			"acl": [ "luci-app-e87n-control-center" ],
+			"uci": { "display": true }
+		}
+	},
+	"admin/services/e87n-mosdns": {
+		"title": "MosDNS",
+		"order": 30,
+		"action": {
+			"type": "view",
+			"path": "e87n/mosdns"
+		},
+		"depends": {
+			"acl": [ "luci-app-e87n-control-center" ],
+			"uci": { "mosdns-ui": true }
+		}
+	},
+	"admin/services/e87n-adguardhome": {
+		"title": "AdGuard Home",
+		"order": 31,
+		"action": {
+			"type": "view",
+			"path": "e87n/adguardhome"
+		},
+		"depends": {
+			"acl": [ "luci-app-e87n-control-center" ],
+			"uci": { "adguardhome": true }
+		}
+	}
+}

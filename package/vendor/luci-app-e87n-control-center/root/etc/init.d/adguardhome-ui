@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+
+START=18
+USE_PROCD=1
+
+apply_state() {
+	local enabled
+
+	enabled="$(uci -q get adguardhome.config.enabled)"
+	if [ "$enabled" = "1" ]; then
+		/etc/init.d/adguardhome enable >/dev/null 2>&1 || true
+		/etc/init.d/adguardhome restart >/dev/null 2>&1 || true
+	else
+		/etc/init.d/adguardhome stop >/dev/null 2>&1 || true
+		/etc/init.d/adguardhome disable >/dev/null 2>&1 || true
+	fi
+}
+
+start_service() {
+	apply_state
+}
+
+reload_service() {
+	apply_state
+}
+
+service_triggers() {
+	procd_add_reload_trigger adguardhome
+}

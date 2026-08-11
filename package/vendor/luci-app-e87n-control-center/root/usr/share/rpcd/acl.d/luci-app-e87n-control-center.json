@@ -1,0 +1,17 @@
+{
+	"luci-app-e87n-control-center": {
+		"description": "Grant access to E87N fan, display and DNS controls",
+		"read": {
+			"uci": [ "fancontrol", "display", "mosdns-ui", "adguardhome" ],
+			"file": {
+				"/etc/mosdns/config.yaml": [ "read" ]
+			}
+		},
+		"write": {
+			"uci": [ "fancontrol", "display", "mosdns-ui", "adguardhome" ],
+			"file": {
+				"/etc/mosdns/config.yaml": [ "write" ]
+			}
+		}
+	}
+}

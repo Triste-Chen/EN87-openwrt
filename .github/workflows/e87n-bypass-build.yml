@@ -6,6 +6,7 @@ on:
     paths:
       - 'configs/e87n-bypass.config'
       - 'package/vendor/e87n-bypass-defaults/**'
+      - 'package/vendor/luci-app-e87n-control-center/**'
       - 'package/vendor/e87n-defaults/Makefile'
       - 'target/linux/mediatek/image/filogic.mk'
       - '.github/workflows/e87n-bypass-build.yml'
@@ -68,6 +69,7 @@ jobs:
           required_symbols=(
             CONFIG_TARGET_mediatek_filogic_DEVICE_edgepi_e87n
             CONFIG_PACKAGE_e87n-bypass-defaults
+            CONFIG_PACKAGE_luci-app-e87n-control-center
             CONFIG_PACKAGE_luci-app-passwall
             CONFIG_PACKAGE_xray-core
             CONFIG_PACKAGE_mosdns
@@ -81,6 +83,20 @@ jobs:
           for symbol in "${required_symbols[@]}"; do
             grep -qx "${symbol}=y" .config || {
               echo "missing required symbol: ${symbol}" >&2
+              exit 1
+            }
+          done
+
+          required_ui_files=(
+            package/vendor/luci-app-e87n-control-center/root/usr/share/luci/menu.d/luci-app-e87n-control-center.json
+            package/vendor/luci-app-e87n-control-center/htdocs/luci-static/resources/view/e87n/fancontrol.js
+            package/vendor/luci-app-e87n-control-center/htdocs/luci-static/resources/view/e87n/display.js
+            package/vendor/luci-app-e87n-control-center/htdocs/luci-static/resources/view/e87n/mosdns.js
+            package/vendor/luci-app-e87n-control-center/htdocs/luci-static/resources/view/e87n/adguardhome.js
+          )
+          for ui_file in "${required_ui_files[@]}"; do
+            test -s "${ui_file}" || {
+              echo "missing required LuCI file: ${ui_file}" >&2
               exit 1
             }
           done
@@ -109,7 +125,7 @@ jobs:
           test -s "$initramfs"
 
           required_packages=(
-            e87n-bypass-defaults fancontrol display-control
+            e87n-bypass-defaults fancontrol display-control luci-app-e87n-control-center
             luci-app-passwall xray-core mosdns adguardhome
             strongswan luci-app-ipsec-vpnd ddns-scripts luci-app-ddns
             luci-app-upnp vlmcsd luci-app-vlmcsd ttyd luci-app-ttyd
@@ -133,6 +149,7 @@ jobs:
             echo "passwall_luci=d9373af2f74fe9efabcfe57b257a047e445c8e07"
             echo "passwall_packages=b4f719f44343b6f62d5c21e14da0c844b21a58ed"
             echo "management_ip=192.168.88.1"
+            echo "e87n_luci_control_center=1.0.0"
             echo "wireless=excluded"
             echo "sing_box=excluded_go_1.24_requirement"
             echo "geoview=excluded_go_1.25_requirement"

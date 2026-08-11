@@ -1,0 +1,2 @@
+config mosdns-ui 'settings'
+	option enabled '1'
